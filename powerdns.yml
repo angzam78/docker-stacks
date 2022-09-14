@@ -1,0 +1,67 @@
+version: '3.9'
+
+services:
+
+#  recursor:
+#    image: powerdns/pdns-recursor-46:4.6.0 # the latest pdns-recursor from dockerhub
+#    # the forward-zones are used to make sure the recursor asks the local authoritative server 
+#    # about our own domains
+#    command: --forward-zones=workload.stream=172.17.0.1:5300,lan=192.168.1.254:53 --local-address=0.0.0.0 --local-port=53 
+#    networks:
+#      - network
+#    environment:
+#      - PDNS_RECURSOR_API_KEY=onelongkey
+#    ports:
+#      - "53:53"
+#      - "53:53/udp"
+#      - "8082:8082" # HTTP API for the recursor
+
+  auth:
+    image: powerdns/pdns-auth-46:4.6.0 # latest pdns-authoritative nameserver image
+    command: --local-address=0.0.0.0 --local-port=5300
+    networks:
+      - network
+    user: root
+    environment:
+      - PDNS_AUTH_API_KEY=onelongkey
+    ports:
+      - "5300:5300" # this is the port we redirect queries to above
+      - "5300:5300/udp"
+      - "8081:8081" # HTTP API of the server
+    volumes:
+       - data:/var/lib/powerdns # file: pdns.sqlite3
+
+  admin:
+    image: ngoduykhanh/powerdns-admin:latest
+    networks:
+      - network
+      - frontend_network
+    environment:
+      - SECRET_KEY=onelongkey
+    volumes:
+       - data:/data # file: powerdns-admin.db
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.powerdns.rule=Host(`powerdns.home.workload.stream`) # && PathPrefix(`/powerdns`)
+        - traefik.http.routers.powerdns.entrypoints=websecure
+        - traefik.http.routers.powerdns.tls.certresolver=letsencrypt
+        - traefik.http.services.powerdnsservice.loadBalancer.server.port=80
+#        - traefik.http.middlewares.skipsubdir.stripprefix.prefixes=/powerdns
+#        - traefik.http.routers.powerdns.middlewares=skipsubdir@docker
+#        - traefik.http.routers.powerdns.middlewares=powerdns-stripprefix
+#        - traefik.http.routers.powerdns.rule=PathPrefix(`/powerdns{regex:$$|/.*}`)
+#        - traefik.http.middlewares.powerdns-stripprefix.stripprefix.prefixes=/powerdns
+#        - traefik.http.middlewares.powerdns-stripprefix.stripprefix.forceslash=false
+
+networks:
+  network:
+    internal: true
+
+volumes:
+  data:
+    driver: seaweedfs:latest
+    driver_opts:
+      'host': '172.17.0.1:8888'
+      'filerpath': '/buckets/docker/powerdns'
+

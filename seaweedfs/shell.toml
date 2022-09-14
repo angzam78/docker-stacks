@@ -1,0 +1,7 @@
+[cluster]
+default = "local"
+
+[cluster.local]
+master = "master1:9333,master2:9333,master3:9333"
+filer = "filer:8888"
+

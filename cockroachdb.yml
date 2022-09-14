@@ -1,0 +1,58 @@
+version: '3.9'
+
+services:
+
+  roach:
+    image: tabulario/cockroach:v21.2.7 # cockroachdb/cockroach:v21.2.7
+    hostname: "roach{{.Task.Slot}}"
+    entrypoint: /bin/sh -c '/cockroach/cockroach.sh start --certs-dir=/certs --listen-addr=0.0.0.0:26257 --advertise-addr=$$HOSTNAME:26257 --http-addr=0.0.0.0:8080 --join=roach1:26257,roach2:26257,roach3:26257'
+    ports:
+      - "8081:8080"
+      - "26257:26257"
+    secrets:
+      - source: node.key
+        target: /certs/node.key
+        mode: 0600
+      - source: node.crt
+        target: /certs/node.crt
+        mode: 0644
+      - source: ca.crt
+        target: /certs/ca.crt
+        mode: 0644
+    volumes:
+      - data:/cockroach/cockroach-data
+    networks:
+      - network
+    deploy:
+      mode: replicated
+      replicas: 3
+      placement:
+        max_replicas_per_node: 1
+        constraints:
+          - node.role == manager
+          - node.platform.os == linux
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=pass
+    ports:
+      - "8082:80"
+    networks:
+      - network
+
+secrets:
+  node.key:
+    file: cockroachdb/certs/node.key
+  node.crt:
+    file: cockroachdb/certs/node.crt
+  ca.crt:
+    file: cockroachdb/certs/ca.crt
+
+networks:
+  network:
+
+volumes:
+  data:
+

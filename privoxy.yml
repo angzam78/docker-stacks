@@ -1,0 +1,40 @@
+version: '3.9'
+
+services:
+
+  privoxy:
+    image: shinobit/privoxy # ajoergensen/privoxy
+    hostname: privoxy
+    command: /usr/local/bin/startprivoxy
+    ports:
+      - 8118:8118
+    networks:
+      - network
+#    volumes:
+#      - config:/etc/privoxy
+#    configs:
+#      - source: privoxy.config
+#        target: /etc/privoxy/config
+#        uid: '100'
+#        gid: '101'
+#        mode: 0660
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+          - node.platform.os == linux
+
+secrets:
+  adminpass:
+    external: true
+
+networks:
+  network:
+
+volumes:
+  config:
+    driver: seaweedfs:latest
+    driver_opts:
+      'host': '172.17.0.1:8888'
+      'filerpath': '/buckets/docker/privoxy' # needs to be created manually
+

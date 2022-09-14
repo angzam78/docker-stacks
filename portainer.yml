@@ -1,0 +1,78 @@
+version: '3.9'
+
+services:
+  agent:
+    image: portainer/agent:alpine
+    environment:
+      AGENT_CLUSTER_ADDR: tasks.agent
+      # AGENT_PORT: 9001
+      # LOG_LEVEL: debug
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+    networks:
+      - network
+    deploy:
+      mode: global
+      placement:
+        constraints: [node.platform.os == linux]
+
+  portainer:
+    image: portainer/portainer-ce:alpine
+    command: -H tcp://tasks.agent:9001 --tlsskipverify --admin-password-file /run/secrets/adminpass
+    ports:
+      - "9000:9000"
+#      - "8000:8000"
+    secrets:
+      - adminpass
+    volumes:
+      - data:/data
+    networks:
+      - network
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+#    healthcheck:
+#      test: ["CMD", "/docker", "container", "ls", "-f name=^portainer*", "-f status=running"]
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', 'localhost:9000/api/status']
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  cleanup:
+    image: docker
+    command: docker system prune --force
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - network
+    deploy:
+      mode: global
+      restart_policy:
+        delay: 24h
+    depends_on:
+      - portainer
+
+secrets:
+  adminpass:
+    external: true
+
+networks:
+  network:
+    internal: true
+
+volumes:
+  data:
+    driver: seaweedfs:latest
+    driver_opts:
+      'host': '172.17.0.1:8888'
+      'filerpath': '/buckets/docker/portainer'
+#    driver: juicefs:latest
+#   driver_opts:
+#      metaurl: redis://system:system@172.17.0.1:6379/11
+#      '--subdir': 'portainer'
+#      '--no-usage-report': ''
+

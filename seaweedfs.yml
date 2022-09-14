@@ -1,0 +1,102 @@
+version: '3.9'
+
+services:
+
+  master:
+    image: chrislusf/seaweedfs
+    hostname: "master{{.Task.Slot}}"
+    ports:
+      - 9333:9333
+      - 19333:19333
+    entrypoint: /bin/sh -c '/entrypoint.sh master -ip=$$HOSTNAME -ip.bind=0.0.0.0 -peers=master1:9333,master2:9333,master3:9333 -defaultReplication=001' 
+    volumes:
+      - data:/data
+    networks:
+      - network
+    configs:
+      - source: master.toml
+        target: /etc/seaweedfs/master.toml
+    deploy:
+      mode: replicated
+      replicas: 3
+      placement:
+        max_replicas_per_node: 1
+        constraints:
+          - node.role == manager
+          - node.platform.os == linux
+
+  volume:
+    image: chrislusf/seaweedfs
+    hostname: "{{.Node.Hostname}}"
+    ports:
+      - target: 8080
+        published: 8080
+        protocol: tcp
+        mode: host
+      - target: 18080
+        published: 18080
+        protocol: tcp
+        mode: host
+    entrypoint: /bin/sh -c '/entrypoint.sh volume -ip=$$HOSTNAME -ip.bind=0.0.0.0 -mserver=master:9333 -dataCenter=home -rack=servers'
+    volumes:
+      - data:/data
+    networks:
+      - network
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.role == manager
+          - node.platform.os == linux
+
+  filer:
+    image: chrislusf/seaweedfs
+    hostname: "filer{{.Task.Slot}}"
+    ports:
+      - 8888:8888
+      - 18888:18888
+      - 8333:8333
+      - 8111:8111
+      - target: 8333
+        published: 18333
+        protocol: tcp
+        mode: host
+    entrypoint: /bin/sh -c '/entrypoint.sh filer -ip=$$HOSTNAME -ip.bind=0.0.0.0 -master=master:9333 -s3 -iam'
+    volumes:
+      - data:/data
+    networks:
+      - network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    configs:
+      - source: filer.toml
+        target: /etc/seaweedfs/filer.toml
+      - source: shell.toml
+        target: /etc/seaweedfs/shell.toml
+    secrets:
+      - adminpass
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+          - node.platform.os == linux
+
+configs:
+  master.toml:
+    file: seaweedfs/master.toml
+  shell.toml:
+    file: seaweedfs/shell.toml
+  filer.toml:
+    file: seaweedfs/filer.toml.tmpl
+    template_driver: golang
+
+secrets:
+  adminpass:
+    external: true
+
+networks:
+  network:
+
+volumes:
+  data:
+
