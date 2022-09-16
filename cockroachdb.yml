@@ -3,7 +3,7 @@ version: '3.9'
 services:
 
   roach:
-    image: raymondstrose/cockroachdb:21.2.4   #tabulario/cockroach:v21.2.7 # cockroachdb/cockroach:v21.2.7
+    image: raymondstrose/cockroachdb:v21.2.4  #tabulario/cockroach:v21.2.7 # cockroachdb/cockroach:v21.2.7
     hostname: "roach{{.Task.Slot}}"
     entrypoint: /bin/sh -c '/cockroach/cockroach.sh start --certs-dir=/certs --listen-addr=0.0.0.0:26257 --advertise-addr=$$HOSTNAME:26257 --http-addr=0.0.0.0:8080 --join=roach1:26257,roach2:26257,roach3:26257'
     ports:
