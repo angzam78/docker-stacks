@@ -3,7 +3,7 @@ version: '3.9'
 services:
 
   roach:
-    image: tabulario/cockroach:v21.2.7 # cockroachdb/cockroach:v21.2.7
+    image: raymondstrose/cockroachdb:21.2.4   #tabulario/cockroach:v21.2.7 # cockroachdb/cockroach:v21.2.7
     hostname: "roach{{.Task.Slot}}"
     entrypoint: /bin/sh -c '/cockroach/cockroach.sh start --certs-dir=/certs --listen-addr=0.0.0.0:26257 --advertise-addr=$$HOSTNAME:26257 --http-addr=0.0.0.0:8080 --join=roach1:26257,roach2:26257,roach3:26257'
     ports:
@@ -31,16 +31,6 @@ services:
         constraints:
           - node.role == manager
           - node.platform.os == linux
-
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
-      - PGADMIN_DEFAULT_PASSWORD=pass
-    ports:
-      - "8082:80"
-    networks:
-      - network
 
 secrets:
   node.key:
