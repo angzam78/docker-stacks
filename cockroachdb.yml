@@ -3,7 +3,7 @@ version: '3.9'
 services:
 
   roach:
-    image: registry.viraqua.net/cockroachdb:v22.1.7-1663669563  #tabulario/cockroach:v21.2.7 # cockroachdb/cockroach:v21.2.7
+    image: registry.viraqua.net/cockroachdb:v22.1.7-1663689016
     hostname: "roach{{.Task.Slot}}"
     command: start --certs-dir=/certs --join=roach1:26257,roach2:26257,roach3:26257
     ports:
