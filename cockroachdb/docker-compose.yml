@@ -34,11 +34,11 @@ services:
 
 secrets:
   node.key:
-    file: cockroachdb/certs/node.key
+    file: certs/node.key
   node.crt:
-    file: cockroachdb/certs/node.crt
+    file: certs/node.crt
   ca.crt:
-    file: cockroachdb/certs/ca.crt
+    file: certs/ca.crt
 
 networks:
   network:

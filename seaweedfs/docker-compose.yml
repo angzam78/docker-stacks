@@ -83,11 +83,11 @@ services:
 
 configs:
   master.toml:
-    file: seaweedfs/master.toml
+    file: master.toml
   shell.toml:
-    file: seaweedfs/shell.toml
+    file: shell.toml
   filer.toml:
-    file: seaweedfs/filer.toml.tmpl
+    file: filer.toml.tmpl
     template_driver: golang
 
 secrets:

@@ -72,9 +72,9 @@ services:
 
 configs:
   dynamic.yaml:
-    file: traefik/dynamic.yaml
+    file: dynamic.yaml
   traefik.yaml:
-    file: traefik/traefik.yaml.tmpl
+    file: traefik.yaml.tmpl
     template_driver: golang
 
 networks:
