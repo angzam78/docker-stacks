@@ -7,7 +7,6 @@ compression_level = 2
 
 rpc_secret = "4425f5c26c5e11581d3223904324dcb5b5d5dfb14e5e7f35e38c595424f5f1e6"
 rpc_bind_addr = "[::]:3901"
-rpc_public_addr = cluster.home.arpa
 
 bootstrap_peers = [
 ]
