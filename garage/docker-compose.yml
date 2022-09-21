@@ -1,0 +1,38 @@
+version: '3.9'
+
+services:
+
+  garage:
+    image: angzam78/garage:v0.7.0-rc1
+    hostname: "garage{{.Task.Slot}}"
+    ports:
+      - 3900:3900
+      - 3902:3902
+    volumes:
+      - meta:/var/lib/garage/meta
+      - data:/var/lib/garage/data
+    networks:
+      - network
+    configs:
+      - source: garage.toml
+        target: /etc/garage.toml
+    deploy:
+      mode: replicated
+      replicas: 3
+      placement:
+        max_replicas_per_node: 1
+        constraints:
+          - node.role == manager
+          - node.platform.os == linux
+
+configs:
+  garage.toml:
+    file: garage.toml
+    template_driver: golang
+
+networks:
+  network:
+
+volumes:
+  meta:
+  data:
