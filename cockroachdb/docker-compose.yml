@@ -39,6 +39,8 @@ services:
       - 8082:80
     networks:
       - network
+    secrets:
+      - adminpass    
 
 secrets:
   node.key:
@@ -47,6 +49,8 @@ secrets:
     file: certs/node.crt
   ca.crt:
     file: certs/ca.crt
+  adminpass:
+    external: true
 
 networks:
   network:
