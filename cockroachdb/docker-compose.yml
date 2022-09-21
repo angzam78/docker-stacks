@@ -41,6 +41,9 @@ services:
       - network
     secrets:
       - adminpass    
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD_FILE: ${PGADMIN_DEFAULT_PASSWORD_FILE}
 
 secrets:
   node.key:
