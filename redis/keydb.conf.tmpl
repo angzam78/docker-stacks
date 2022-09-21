@@ -1,0 +1,16 @@
+protected-mode no
+
+port 6379
+
+requirepass {{ secret "adminpass" }}
+masterauth {{ secret "adminpass" }}
+
+multi-master yes
+active-replica yes
+replicaof keydb1 6379
+replicaof keydb2 6379
+replicaof keydb3 6379
+
+appendonly yes
+
+user system on +@all ~* >system
