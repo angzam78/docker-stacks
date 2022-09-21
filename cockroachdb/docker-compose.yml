@@ -44,6 +44,13 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD_FILE: ${PGADMIN_DEFAULT_PASSWORD_FILE}
+    secrets:
+      - source: client.root.key
+        target: /certs/client.root.key
+        mode: 0600
+      - source: client.root.crt
+        target: /certs/client.root.crt
+        mode: 0644
 
 secrets:
   node.key:
@@ -52,6 +59,12 @@ secrets:
     file: certs/node.crt
   ca.crt:
     file: certs/ca.crt
+
+  client.root.crt:
+    file: certs/client.root.crt
+  client.root.key:
+    file: certs/client.root.key
+
   adminpass:
     external: true
 
