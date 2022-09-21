@@ -1,0 +1,47 @@
+version: '3.9'
+
+services:
+
+  keydb:
+    image: eqalpha/keydb
+    hostname: "keydb{{.Task.Slot}}"
+    ports:
+      - target: 6379
+        published: 6379
+        protocol: tcp
+        mode: host
+    volumes:
+      - data:/data
+    networks:
+      - network
+    configs:
+      - source: keydb.conf
+        target: /etc/keydb/keydb.conf
+    secrets:
+      - adminpass
+    sysctls:
+      net.core.somaxconn: 1024
+    deploy:
+      mode: replicated
+      replicas: 3
+      placement:
+        max_replicas_per_node: 1
+        constraints:
+          - node.role == manager
+          - node.platform.os == linux
+
+configs:
+  keydb.conf:
+    file: keydb.conf.tmpl
+    template_driver: golang
+
+secrets:
+  adminpass:
+    external: true
+
+networks:
+  network:
+
+volumes:
+  data:
+
