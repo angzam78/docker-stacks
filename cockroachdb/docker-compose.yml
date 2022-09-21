@@ -39,12 +39,11 @@ services:
       - 8082:80
     networks:
       - network
-    secrets:
-      - adminpass    
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD_FILE: ${PGADMIN_DEFAULT_PASSWORD_FILE}
     secrets:
+      - adminpass
       - source: client.root.key
         target: /certs/client.root.key
         mode: 0600
