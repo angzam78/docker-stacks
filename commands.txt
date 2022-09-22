@@ -1,0 +1,1 @@
+docker service create --name=juicefs_plugin_installer --mode=global-job --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock docker plugin install --alias juicefs --grant-all-permissions registry.viraqua.net/juicefs:v1.0.0-`dpkg --print-architecture`
