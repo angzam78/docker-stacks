@@ -5,4 +5,6 @@ create database juicefs_docker;
 postgres=# create user juicefs with encrypted password 'mypass';
 postgres=# grant all privileges on database juicefs_docker to juicefs;
 
-./juicefs format --storage postgres --bucket cluster.home.arpa:26257/juicefs_docker --access-key juicefs --secret-key ju1cyPass postgres://juicefs:ju1cyPass@cluster.home.arpa:26257/juicefs_docker
+./juicefs format --storage postgres --bucket cluster.home.arpa:26257/juicefs_docker --access-key juicefs --secret-key mypass postgres://juicefs:mypass@cluster.home.arpa:26257/juicefs_docker
+
+sudo ./juicefs mount -d "postgres://juicefs:mypass@cluster.home.arpa:26257/juicefs_docker" /mnt
