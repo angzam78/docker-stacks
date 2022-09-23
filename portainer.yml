@@ -66,13 +66,11 @@ networks:
 
 volumes:
   data:
-    driver: seaweedfs:latest
+#    driver: seaweedfs:latest
+#    driver_opts:
+#      'host': '172.17.0.1:8888'
+#      'filerpath': '/buckets/docker/portainer'
+    driver: juicefs:latest
     driver_opts:
-      'host': '172.17.0.1:8888'
-      'filerpath': '/buckets/docker/portainer'
-#    driver: juicefs:latest
-#   driver_opts:
-#      metaurl: redis://system:system@172.17.0.1:6379/11
-#      '--subdir': 'portainer'
-#      '--no-usage-report': ''
+      metaurl: postgres://juicefs:ju1cyPass@cluster.home.arpa:26257/juicefs_docker
 
