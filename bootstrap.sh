@@ -14,6 +14,9 @@ docker run --rm -it --volume $(pwd)/cockroachdb/certs:/certs cockroachdb/cockroa
 # service to ensure custom seaweedfs plugin is installed on all nodes
 docker service create --name=seaweedfs_plugin --mode=global-job --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock docker plugin install --alias seaweedfs --grant-all-permissions angzam78/seaweedfs-volume-plugin:latest-`uname -m | sed -e s/x86_64/amd64/ -e s/aarch64$/arm64/`
 
+# service to ensure custom juicefs plugin is installed on all nodes
+docker service create --name=juicefs_plugin --mode=global-job --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock docker /bin/sh -c 'docker plugin inspect juicefs --format "{{.PluginReference}}" 2> /dev/null; if [ $? -eq 1 ]; then docker plugin install --alias juicefs --grant-all-permissions registry.viraqua.net/juicefs-volume-plugin:1.0.0-`uname -m | sed -e s/x86_64/amd64/ -e s/aarch64$/arm64/`; fi'
+
 # persistent and fast data storage service
 docker run --rm -it --volume $(pwd)/cockroachdb/certs:/certs cockroachdb/cockroach sql --certs-dir=/certs --host=172.17.0.1:26257 --execute="CREATE USER weed WITH PASSWORD '$password';CREATE DATABASE seaweedfs;ALTER DATABASE seaweedfs OWNER TO weed;"
 docker stack deploy -c seaweedfs.yml seaweedfs
