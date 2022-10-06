@@ -42,20 +42,6 @@ services:
       timeout: 5s
       retries: 3
 
-  cleanup:
-    image: docker
-    command: docker system prune --force
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - network
-    deploy:
-      mode: global
-      restart_policy:
-        delay: 24h
-    depends_on:
-      - portainer
-
 secrets:
   adminpass:
     external: true
