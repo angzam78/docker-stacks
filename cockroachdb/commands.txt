@@ -1,0 +1,2 @@
+docker run --rm -it --volume $(pwd)/certs:/certs cockroachdb/cockroach node decommission 4 --certs-dir=/certs --host=172.17.0.1:26257
+
