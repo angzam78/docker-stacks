@@ -14,7 +14,7 @@ services:
     volumes:
       - traefik:/etc/traefik
       - letsencrypt:/letsencrypt
-      - traefik-plugins:/plugins-local
+      - plugins:/plugins-local
     command:
       # logging
       - --accesslog=true
@@ -80,7 +80,7 @@ volumes:
     driver_opts:
       metaurl: postgres://juicefs:ju1cyPass@172.17.0.1:26257/juicefs_docker
       subdir: letsencrypt
-  traefik-plugins:
+  plugins:
     driver: juicefs:latest
     driver_opts:
       metaurl: postgres://juicefs:ju1cyPass@172.17.0.1:26257/juicefs_docker
