@@ -86,7 +86,7 @@ services:
         #- traefik.http.routers.whoami.tls.certresolver=letsencrypt
 #        - traefik.http.routers.whoami.tls.domains[0].main=home.workload.stream
 #        - traefik.http.routers.whoami.tls.domains[0].sans=*.home.workload.stream
-        - traefik.http.services.whoamiservice.loadBalancer.server.port=80
+        - traefik.http.services.whoamiservice.loadBalancer.server.port=443
 
 
 volumes:
