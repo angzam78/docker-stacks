@@ -68,6 +68,7 @@ services:
       CONTAINERS: 1
       SERVICES: 1
       SWARM: 1
+      NETWORKS: 1
 
 volumes:
   traefik:
