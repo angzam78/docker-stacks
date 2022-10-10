@@ -57,7 +57,7 @@ services:
         - traefik.http.routers.dashboard.middlewares=traefik
         - traefik.http.middlewares.traefik.chain.middlewares=traefik-strip-prefix
         - traefik.http.middlewares.traefik-strip-prefix.stripprefix.prefixes=/admin/traefik
-        - traefik.http.services.dashboard.loadbalancer.server.port=9080
+        - traefik.http.services.dashboardservice.loadbalancer.server.port=9080
 
   docker-socket:
     image: tecnativa/docker-socket-proxy
