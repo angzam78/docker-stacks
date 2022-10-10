@@ -2,26 +2,6 @@ version: '3.9'
 
 services:
 
-  docker-proxy:
-    image: tecnativa/docker-socket-proxy:latest
-    networks:
-      - docker
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    deploy:
-      restart_policy:
-        condition: on-failure
-    environment:
-      NETWORKS: 1
-      SERVICES: 1
-      TASKS: 1
-      CONTAINERS: 1
-      SWARM: 1
-      placement:
-        constraints: 
-          - node.role == manager
-          - node.platform.os == linux
-
   juicefs-installer:
     image: docker
     networks:
