@@ -30,12 +30,9 @@ services:
       - traefik.http.routers.powerdns.rule=PathPrefix(`/admin/powerdns`)
       - traefik.http.routers.powerdns.service=powerdns
       - traefik.http.routers.powerdns.entrypoints=admin
-#      - traefik.http.routers.powerdns.middlewares=authelia@docker
       - traefik.http.services.powerdns.loadbalancer.server.port=80
     environment:
       - SCRIPT_NAME=/admin/powerdns
-#    healthcheck:
-#      disable: true # disabled health check because custom script name breaks it
 
 networks:
   frontend:
