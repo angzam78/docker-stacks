@@ -20,8 +20,6 @@ services:
     command: docker system prune --force
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - network
     deploy:
       mode: global
       restart_policy:
