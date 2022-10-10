@@ -27,10 +27,10 @@ services:
       - --providers.docker.endpoint=tcp://docker-socket:2375
       # incoming entrypoints
       - --entrypoints.web.address=:80
-      #- --entrypoints.websecure.address=:443
-      #- --entrypoints.web.http.redirections.entryPoint.to=websecure
-      #- --entrypoints.web.http.redirections.entryPoint.scheme=https
-      #- --entrypoints.web.http.redirections.entrypoint.permanent=true
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
+      - --entrypoints.web.http.redirections.entrypoint.permanent=true
       # SSL certificate resolvers
       #- --certificatesresolvers.letsencrypt.acme.dnschallenge=true
       #- --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=pdns
