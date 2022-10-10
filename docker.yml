@@ -4,19 +4,19 @@ services:
 
   docker-proxy:
     image: tecnativa/docker-socket-proxy:latest
+    networks:
+      - docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    deploy:
+      restart_policy:
+        condition: on-failure
     environment:
       NETWORKS: 1
       SERVICES: 1
       TASKS: 1
       CONTAINERS: 1
       SWARM: 1
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    networks:
-      - docker
-    deploy:
-      restart_policy:
-        condition: on-failure
       placement:
         constraints: 
           - node.role == manager
@@ -24,6 +24,8 @@ services:
 
   juicefs-installer:
     image: docker
+    networks:
+      - docker
     entrypoint: /bin/sh -c "docker plugin inspect juicefs --format "{{.PluginReference}}" 2> /dev/null; if [ $$? -eq 1 ]; then docker plugin install --alias juicefs --grant-all-permissions registry.viraqua.net/juicefs-volume-plugin:1.0.0-`uname -m | sed -e s/x86_64/amd64/ -e s/aarch64$$/arm64/`; fi; sleep infinity"
     healthcheck:
       test: ['CMD-SHELL', 'docker plugin inspect juicefs > /dev/null 2>&1']
@@ -37,6 +39,8 @@ services:
 
   cleanup:
     image: docker
+    networks:
+      - docker
     command: docker system prune --force
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
