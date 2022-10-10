@@ -59,3 +59,4 @@ volumes:
     driver: juicefs:latest
     driver_opts:
       metaurl: postgres://juicefs:ju1cyPass@172.17.0.1:26257/juicefs_docker
+      subdir: portainer
