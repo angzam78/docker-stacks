@@ -3,15 +3,15 @@ version: '3.9'
 services:
 
   auth:
-    image: powerdns/pdns-auth-46:4.6.0 # latest pdns-authoritative nameserver image
+    image: powerdns/pdns-auth-46:4.6.3 # latest pdns-authoritative nameserver image
     command: --local-address=0.0.0.0 --local-port=5300
     networks:
       - internal
     environment:
       - PDNS_AUTH_API_KEY=OQslQYkUcxoqpdwzy5AULiatYSDFnYn2
     ports:
-      - "5300:53"
-      - "5300:53/udp"
+      - "5300:5300"
+      - "5300:5300/udp"
       # - "8081:8081" # HTTP API of the server
     volumes:
        - data:/var/lib/powerdns # file: pdns.sqlite3
