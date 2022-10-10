@@ -26,5 +26,3 @@ services:
       mode: global
       restart_policy:
         delay: 24h
-    depends_on:
-      - portainer
