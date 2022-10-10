@@ -34,8 +34,8 @@ services:
       - traefik.http.services.powerdns.loadbalancer.server.port=80
     environment:
       - SCRIPT_NAME=/admin/powerdns
-    healthcheck:
-      disable: true # disabled health check because custom script name breaks it
+#    healthcheck:
+#      disable: true # disabled health check because custom script name breaks it
 
 networks:
   frontend:
