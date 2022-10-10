@@ -17,7 +17,6 @@ services:
       - plugins:/plugins-local
     command:
       # logging
-      - --api.insecure=true
       - --accesslog=true
       - --log.level=DEBUG
       - --log.format=json
@@ -28,16 +27,16 @@ services:
       - --providers.docker.endpoint=tcp://docker-socket:2375
       # incoming entrypoints
       - --entrypoints.web.address=:80
-      - --entrypoints.websecure.address=:443
-      - --entrypoints.web.http.redirections.entryPoint.to=websecure
-      - --entrypoints.web.http.redirections.entryPoint.scheme=https
-      - --entrypoints.web.http.redirections.entrypoint.permanent=true
+      #- --entrypoints.websecure.address=:443
+      #- --entrypoints.web.http.redirections.entryPoint.to=websecure
+      #- --entrypoints.web.http.redirections.entryPoint.scheme=https
+      #- --entrypoints.web.http.redirections.entrypoint.permanent=true
       # SSL certificate resolvers
-      - --certificatesresolvers.letsencrypt.acme.dnschallenge=true
-      - --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=pdns
-      - --certificatesresolvers.letsencrypt.acme.dnschallenge.disablepropagationcheck=true
-      - --certificatesresolvers.letsencrypt.acme.email=hostmaster@viraqua.net
-      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      #- --certificatesresolvers.letsencrypt.acme.dnschallenge=true
+      #- --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=pdns
+      #- --certificatesresolvers.letsencrypt.acme.dnschallenge.disablepropagationcheck=true
+      #- --certificatesresolvers.letsencrypt.acme.email=hostmaster@viraqua.net
+      #- --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
       # admin interface
       - --api.dashboard=true
       - --entrypoints.admin.address=:9080
@@ -81,12 +80,12 @@ services:
       labels:
         - traefik.enable=true
         - traefik.http.routers.whoami.rule=Host(`cluster.home.arpa`)
-        - traefik.http.routers.whoami.entrypoints=websecure
+        #- traefik.http.routers.whoami.entrypoints=websecure
 #        - traefik.http.routers.whoami.tls=true
         #- traefik.http.routers.whoami.tls.certresolver=letsencrypt
 #        - traefik.http.routers.whoami.tls.domains[0].main=home.workload.stream
 #        - traefik.http.routers.whoami.tls.domains[0].sans=*.home.workload.stream
-        - traefik.http.services.whoamiservice.loadBalancer.server.port=443
+        - traefik.http.services.whoamiservice.loadBalancer.server.port=80
 
 
 volumes:
