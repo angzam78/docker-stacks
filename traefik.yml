@@ -8,7 +8,7 @@ services:
     ports:
       - 443:443
       - 80:80
-      - 127.0.0.1:9080:9080 # admin port
+      - 9080:9080 # admin port
     networks:
       - frontend
       - internal
@@ -45,7 +45,7 @@ services:
 #      - --experimental.localPlugins.rewrite.version=v0.3.1
     environment:
       - PDNS_API_URL=http://dns-auth:8081/
-      - PDNS_API_KEY=AsRtQU62xcwpLy3T!ufztH-btCtgH+pW
+      - PDNS_API_KEY=OQslQYkUcxoqpdwzy5AULiatYSDFnYn2
     labels:
       - traefik.enable=true
       - traefik.docker.network=frontend
