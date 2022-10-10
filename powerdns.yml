@@ -40,7 +40,7 @@ services:
       - internal
     environment:
       - DOMAIN=viraqua.net
-      - SUBDOMAINS=ns1
+      - SUBDOMAINS=ns1,srv268534
       - INTERVAL=60s
       - NC_DDNS_PASS=21cbdea30e3e4d2ca0d936ae7462dbbd
 
