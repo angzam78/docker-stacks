@@ -21,7 +21,7 @@ services:
       - --log.level=DEBUG
       - --log.format=json
       # docker integration
-      - --providers.docker
+      # - --providers.docker
       - --providers.docker.swarmMode=true
       - --providers.docker.exposedbydefault=false
       - --providers.docker.endpoint=tcp://docker-socket:2375
