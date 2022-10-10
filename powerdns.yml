@@ -8,7 +8,7 @@ services:
     networks:
       - internal
     environment:
-      - PDNS_AUTH_API_KEY=onelongkey
+      - PDNS_AUTH_API_KEY=OQslQYkUcxoqpdwzy5AULiatYSDFnYn2
     ports:
       - "5300:53"
       - "5300:53/udp"
