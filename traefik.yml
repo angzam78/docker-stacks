@@ -81,7 +81,7 @@ services:
         - traefik.enable=true
         - traefik.http.routers.whoami.rule=Host(`cluster.home.arpa`)
         - traefik.http.routers.whoami.entrypoints=websecure
-#        - traefik.http.routers.whoami.tls=true
+        - traefik.http.routers.whoami.tls=true
         #- traefik.http.routers.whoami.tls.certresolver=letsencrypt
 #        - traefik.http.routers.whoami.tls.domains[0].main=home.workload.stream
 #        - traefik.http.routers.whoami.tls.domains[0].sans=*.home.workload.stream
