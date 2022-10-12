@@ -49,20 +49,6 @@ services:
       NETWORKS: 1
       TASKS: 1
 
-  whoami:
-    image: "traefik/whoami"
-    networks:
-       - frontend
-    deploy:
-      labels:
-        - traefik.enable=true
-        - traefik.http.routers.whoami.rule=Host(`whoami.viraqua.net`)
-        - traefik.http.routers.whoami.entrypoints=websecure
-        - traefik.http.routers.whoami.tls=true
-        - traefik.http.routers.whoami.tls.certresolver=letsencrypt
-        - traefik.http.routers.whoami.tls.domains[0].main=whoami.viraqua.net
-        - traefik.http.services.whoamiservice.loadBalancer.server.port=80
-
 configs:
   dynamic.yaml:
     file: dynamic.yaml
