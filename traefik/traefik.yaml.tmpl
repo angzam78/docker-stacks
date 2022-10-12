@@ -3,7 +3,7 @@ providers:
     swarmMode: true
     exposedByDefault: false
     network: frontend
-    endpoint: 'unix:///var/run/docker.sock'
+    endpoint: tcp://docker-socket:2375
     watch: true
   file:
     filename: /etc/traefik/dynamic.yaml
