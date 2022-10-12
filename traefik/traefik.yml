@@ -11,22 +11,44 @@ services:
     networks:
       - frontend
       - internal
-    configs:
-      - source: traefik.yaml
-        target: /etc/traefik/traefik.yaml
-      - source: dynamic.yaml
-        target: /etc/traefik/dynamic.yaml
     volumes:
       - traefik:/etc/traefik
       - letsencrypt:/letsencrypt
       - plugins:/plugins-local
-#    command:
+    command:
+      # logging
+      - --accesslog=true
+      - --log.level=DEBUG
+      - --log.format=json
+      # docker integration
+      - --providers.docker.swarmMode=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.endpoint=tcp://docker-socket:2375
+      # incoming entrypoints
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
+      - --entrypoints.web.http.redirections.entrypoint.permanent=true
+      # SSL certificate resolvers
+      #- --certificatesresolvers.letsencrypt.acme.dnschallenge=true
+      #- --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=pdns
+      #- --certificatesresolvers.letsencrypt.acme.dnschallenge.disablepropagationcheck=true
+      #- --certificatesresolvers.letsencrypt.acme.email=hostmaster@viraqua.net
+      #- --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      # admin interface
+      - --api.dashboard=true
+      - --entrypoints.admin.address=:9080
 #      # plugins
 #      - --experimental.localPlugins.rewrite.modulename=github.com/traefik/plugin-rewritebody
 #      - --experimental.localPlugins.rewrite.version=v0.3.1
+    environment:
+      - PDNS_API_URL=http://dns-auth:8081/
+      - PDNS_API_KEY=OQslQYkUcxoqpdwzy5AULiatYSDFnYn2
     deploy:
       labels:
         - traefik.enable=true
+        - traefik.docker.network=frontend
         # admin interface
         - traefik.http.routers.dashboard.rule=PathPrefix(`/admin/traefik`) || HeadersRegexp(`Referer`, `.*\/admin\/traefik\/.*`)
         - traefik.http.routers.dashboard.service=api@internal
@@ -56,19 +78,13 @@ services:
     deploy:
       labels:
         - traefik.enable=true
-        - traefik.http.routers.whoami.rule=Host(`whoami.viraqua.net`)
+        - traefik.http.routers.whoami.rule=Host(`cluster.home.arpa`)
         - traefik.http.routers.whoami.entrypoints=websecure
         - traefik.http.routers.whoami.tls=true
-        - traefik.http.routers.whoami.tls.certresolver=letsencrypt
-        - traefik.http.routers.whoami.tls.domains[0].main=whoami.viraqua.net
+        #- traefik.http.routers.whoami.tls.certresolver=letsencrypt
+#        - traefik.http.routers.whoami.tls.domains[0].main=home.workload.stream
+#        - traefik.http.routers.whoami.tls.domains[0].sans=*.home.workload.stream
         - traefik.http.services.whoamiservice.loadBalancer.server.port=80
-
-configs:
-  dynamic.yaml:
-    file: dynamic.yaml
-  traefik.yaml:
-    file: traefik.yaml.tmpl
-    template_driver: golang
 
 volumes:
   traefik:
@@ -92,4 +108,3 @@ networks:
     external: yes
   internal:
     external: yes
-

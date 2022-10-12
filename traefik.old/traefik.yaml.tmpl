@@ -2,9 +2,9 @@ providers:
   docker:
     swarmMode: true
     exposedByDefault: false
-    network: frontend
-    endpoint: 'unix:///var/run/docker.sock'
     watch: true
+    endpoint: 'unix:///var/run/docker.sock'
+    network: frontend_network
   file:
     filename: /etc/traefik/dynamic.yaml
     watch: true
@@ -19,25 +19,21 @@ entryPoints:
       redirections:
         entryPoint:
           to: websecure
-          scheme: https
-	  permanent: true
+          scheme: https      
   websecure:
     address: ':443' # https
-  admin:
-    address: ':9080' # admin
 
 certificatesResolvers:
   letsencrypt:
     acme:
-      email: hostmaster@viraqua.net
+      email: admin@home.workload.stream
       storage: /letsencrypt/acme.json
-      tlsChallenge: true
-      caServer: https://acme-staging-v02.api.letsencrypt.org/directory # IMPORTANT: comment this line to get production ready certificates. After this, clear acme.json file.
+      tlsChallenge: {}
+      caServer: https://acme-staging-v02.api.letsencrypt.org/directory # IMPORTANT: uncomment this line to get production ready certificates. After this, clear acme.json file.
 
 log:
-  level: DEBUG  # ERROR, DEBUG, PANIC, FATAL, ERROR, WARN, INFO
-  format: json
-  accessLog: true
+  level: INFO  # ERROR, DEBUG, PANIC, FATAL, ERROR, WARN, INFO
+# accessLog: {}  # uncomment this line to enable access log
 
 global:
   checkNewVersion: false
