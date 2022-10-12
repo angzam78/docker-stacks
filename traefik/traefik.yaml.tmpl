@@ -29,10 +29,10 @@ entryPoints:
 certificatesResolvers:
   letsencrypt:
     acme:
+      tlsChallenge: true
       email: hostmaster@viraqua.net
       storage: /letsencrypt/acme.json
-      tlsChallenge: true
-      caServer: https://acme-staging-v02.api.letsencrypt.org/directory # IMPORTANT: comment this line to get production ready certificates. After this, clear acme.json file.
+      #caServer: https://acme-staging-v02.api.letsencrypt.org/directory # IMPORTANT: After updating this, clear acme.json file.
 
 log:
   level: DEBUG  # ERROR, DEBUG, PANIC, FATAL, ERROR, WARN, INFO
