@@ -7,7 +7,7 @@ services:
     hostname: "pd{{.Task.Slot}}"
     entrypoint: [ "/bin/sh", "-c", "/pd-server --config=/pd.toml -data-dir=/data --name=$$HOSTNAME --advertise-client-urls=http://$$HOSTNAME:2379 --advertise-peer-urls=http://$$HOSTNAME:2380 --initial-cluster=pd1=http://pd1:2380,pd2=http://pd2:2380,pd3=http://pd3:2380" ]
     ports:
-      - "2379"
+      - "2379:2379"
     volumes:
       - pd:/data
     networks:
@@ -29,7 +29,7 @@ services:
     hostname: "tikv-{{.Node.Hostname}}"
     entrypoint: [ "/bin/sh", "-c", "/tikv-server --config=/tikv.toml --advertise-addr=$$HOSTNAME:20160 --data-dir=/data --pd=http://pd1:2379,http://pd2:2379,http://pd3:2379" ]
     ports:
-      - "20160"
+      - "20160:20160"
     volumes:
       - tikv:/data
     networks:
@@ -53,8 +53,8 @@ services:
     hostname: "tidb"
     entrypoint: [ "/bin/sh", "-c", "/tidb-server --config=/tidb.toml --advertise-address=$$HOSTNAME --store=tikv --path=pd1:2379,pd2:2379,pd3:2379" ]
     ports:
-        - "4000"
-        - "10080"
+      - "4000:4000"
+      - "10080:10080"
     networks:
       - network
     configs:
@@ -79,7 +79,7 @@ services:
       - --storage.tsdb.path=/data/prometheus
       - --config.file=/etc/prometheus/prometheus.yml
     ports:
-      - "9095:9090"
+      - "9090:9090"
     networks:
       - network
 #    volumes:
@@ -95,7 +95,7 @@ services:
         target: /etc/prometheus/tidb.rules.yml
 
   tidb-vision:
-    image: pingcap/tidb-vision:v6.1.1
+    image: pingcap/tidb-vision:latest
     environment:
       PD_ENDPOINT: pd:2379
     ports:
