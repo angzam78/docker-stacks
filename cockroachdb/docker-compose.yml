@@ -39,6 +39,7 @@ services:
       - 8082:8081
     networks:
       - network
+      - frontend
     secrets:
       - adminpass
       - source: client.root.key
@@ -47,13 +48,16 @@ services:
       - source: client.root.crt
         target: /certs/client.root.crt
         mode: 0644
-        deploy:
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.powerdns.rule=PathPrefix(`/admin/postgres`)
-      - traefik.http.routers.powerdns.service=postgres
-      - traefik.http.routers.powerdns.entrypoints=admin
-      - traefik.http.services.powerdns.loadbalancer.server.port=8081
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.postgres.rule=PathPrefix(`/admin/postgres`) || HeadersRegexp(`Referer`, `.*\/admin\/postgres\/.*`)
+        - traefik.http.routers.postgres.service=postgresservice
+        - traefik.http.routers.postgres.entrypoints=admin
+        - traefik.http.routers.postgres.middlewares=pgadmin
+        - traefik.http.middlewares.pgadmin.chain.middlewares=pgadmin-strip-prefix
+        - traefik.http.middlewares.pgadmin-strip-prefix.stripprefix.prefixes=/admin/postgres
+        - traefik.http.services.postgresservice.loadbalancer.server.port=8081
 
 secrets:
   node.key:
@@ -73,6 +77,8 @@ secrets:
 
 networks:
   network:
+  frontend:
+    external: true
 
 volumes:
   data:
