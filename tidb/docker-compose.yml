@@ -4,8 +4,8 @@ services:
 
   pd:
     image: pingcap/pd:v6.1.1
-    hostname: "pd{{.Task.Slot}}"
-    entrypoint: [ "/bin/sh", "-c", "/pd-server --config=/pd.toml --data-dir=/data --name=$$HOSTNAME --advertise-client-urls=http://$$HOSTNAME:2379 --advertise-peer-urls=http://$$HOSTNAME:2380 --initial-cluster=pd1=http://pd1:2380,pd2=http://pd2:2380,pd3=http://pd3:2380" ]
+    hostname: "pd-{{.Node.Hostname}}"
+    entrypoint: [ "/bin/sh", "-c", "/pd-server --config=/pd.toml --data-dir=/data --name=$$HOSTNAME --advertise-client-urls=http://$$HOSTNAME:2379 --advertise-peer-urls=http://$$HOSTNAME:2380 --initial-cluster=pd-fujitsu=http://pd-fujitsu:2380,pd-esprimo=http://pd-esprimo:2380,pd-jetson=http://pd-jetson:2380" ]
     ports:
       - "2379:2379"
     volumes:
@@ -27,7 +27,7 @@ services:
   tikv:
     image: pingcap/tikv:v6.1.1
     hostname: "tikv-{{.Node.Hostname}}"
-    entrypoint: [ "/bin/sh", "-c", "/tikv-server --config=/tikv.toml --advertise-addr=$$HOSTNAME:20160 --data-dir=/data --pd=http://pd1:2379,http://pd2:2379,http://pd3:2379" ]
+    entrypoint: [ "/bin/sh", "-c", "/tikv-server --config=/tikv.toml --advertise-addr=$$HOSTNAME:20160 --data-dir=/data --pd=http://pd:2379" ]
     ports:
       - "20160:20160"
     volumes:
@@ -51,7 +51,7 @@ services:
   tidb:
     image: pingcap/tidb:v6.1.1
     hostname: "tidb"
-    entrypoint: [ "/bin/sh", "-c", "/tidb-server --config=/tidb.toml --advertise-address=$$HOSTNAME --store=tikv --path=pd1:2379,pd2:2379,pd3:2379" ]
+    entrypoint: [ "/bin/sh", "-c", "/tidb-server --config=/tidb.toml --advertise-address=$$HOSTNAME --store=tikv --path=pd:2379" ]
     ports:
       - "4000:4000"
       - "10080:10080"
