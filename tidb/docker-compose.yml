@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+
+  pd:
+    image: pingcap/pd:v5.3.2 #v5.4.3
+    hostname: "pd{{.Task.Slot}}"
+    command:
+#      - --data-dir=/data
+      - --config=/pd.toml
+    ports:
+      - "2379"
+    networks:
+      - network
+    configs:
+      - source: pd.toml
+        target: /pd.toml
+    deploy:
+      mode: replicated
+      replicas: 3
+      placement:
+        max_replicas_per_node: 1
+        constraints:
+          - node.role == manager
+          - node.platform.os == linux
+
+  # monitors
+  pushgateway:
+    image: prom/pushgateway:v0.3.1
+    networks:
+      - network
+    command:
+      - --log.level=error
+
+networks:
+  network:
+
+configs:
+  pd.toml:
+    file: pd.toml.tmpl
+    template_driver: golang
+

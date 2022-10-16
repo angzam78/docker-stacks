@@ -1,0 +1,38 @@
+version: '3.9'
+
+services:
+  pd:
+    image: pingcap/pd:latest
+    hostname: "pd{{.Task.Slot}}"
+    ports:
+      - "2379"
+    entrypoint: /bin/sh -c '/pd-server --config=/pd.toml --name=$$HOSTNAME  --advertise-client-urls=http://$$HOSTNAME:2379 --advertise-peer-urls=http://$$HOSTNAME:2380 --initial-cluster=pd1=http://pd1:2380,pd2=http://pd2:2380,pd3=http://pd3:2380'
+    networks:
+      - network
+    configs:
+      - source: pd.toml
+        target: /pd.toml
+    deploy:
+      mode: replicated
+      replicas: 3
+      placement:
+        max_replicas_per_node: 1
+        constraints:
+          - node.role == manager
+          - node.platform.os == linux
+
+  # monitors
+  pushgateway:
+    image: prom/pushgateway:v0.3.1
+    networks:
+      - network
+    command:
+      - --log.level=error
+
+networks:
+  network:
+
+configs:
+  pd.toml:
+    external: true
+    
