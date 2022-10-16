@@ -47,6 +47,13 @@ services:
       - source: client.root.crt
         target: /certs/client.root.crt
         mode: 0644
+        deploy:
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.powerdns.rule=PathPrefix(`/admin/postgres`)
+      - traefik.http.routers.powerdns.service=postgres
+      - traefik.http.routers.powerdns.entrypoints=admin
+      - traefik.http.services.powerdns.loadbalancer.server.port=8081
 
 secrets:
   node.key:
