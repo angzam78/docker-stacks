@@ -5,7 +5,7 @@ services:
   pd:
     image: pingcap/pd:v6.1.1
     hostname: "pd{{.Task.Slot}}"
-    entrypoint: [ "/bin/sh", "-c", "/pd-server --config=/pd.toml -data-dir=/data --name=$$HOSTNAME --advertise-client-urls=http://$$HOSTNAME:2379 --advertise-peer-urls=http://$$HOSTNAME:2380 --initial-cluster=pd1=http://pd1:2380,pd2=http://pd2:2380,pd3=http://pd3:2380" ]
+    entrypoint: [ "/bin/sh", "-c", "/pd-server --config=/pd.toml --data-dir=/data --name=$$HOSTNAME --advertise-client-urls=http://$$HOSTNAME:2379 --advertise-peer-urls=http://$$HOSTNAME:2380 --initial-cluster=pd1=http://pd1:2380,pd2=http://pd2:2380,pd3=http://pd3:2380" ]
     ports:
       - "2379:2379"
     volumes:
