@@ -1,0 +1,13 @@
+change all golang templates to fixed
+
+use env variables in command line
+
+
+
+ environment:
+      - TASK_SLOT={{.Task.Slot}}
+    volumes:
+      - ./config/tikv.toml:/tikv.toml:ro
+      - ./data:/data
+      - ./logs:/logs
+    entrypoint: [ "/bin/sh", "-c", "/tikv-server --advertise-addr=$$HOSTNAME:20160 --addr=0.0.0.0:20160 --data-dir=/data/tikv$$TASK_SLOT

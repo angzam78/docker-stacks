@@ -45,7 +45,7 @@ level = "info"
 # set listening address.
 addr = "0.0.0.0:20160"
 # set advertise listening address for client communication, if not set, use addr instead.
-advertise-addr = "tikv{{ .Task.Slot }}:20160"
+# advertise-addr = ""
 # notify capacity, 40960 is suitable for about 7000 regions.
 # notify-capacity = 40960
 # maximum number of messages can be processed in one tick.

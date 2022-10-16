@@ -1,13 +1,13 @@
-name = "pd{{ .Task.Slot }}"
+name = "pd"
 data-dir = "default.pd"
 
 client-urls = "http://0.0.0.0:2379"
 # if not set, use ${client-urls}
-advertise-client-urls = "http://pd{{ .Task.Slot }}:2379"
+advertise-client-urls = ""
 
 peer-urls = "http://0.0.0.0:2380"
 # if not set, use ${peer-urls}
-advertise-peer-urls = "http://pd{{ .Task.Slot }}:2380"
+advertise-peer-urls = ""
 
 initial-cluster = "pd=http://127.0.0.1:2380"
 initial-cluster-state = "new"
