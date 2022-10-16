@@ -3,13 +3,16 @@ version: '3.9'
 services:
 
   pd:
-    image: pingcap/pd:v5.3.2 #v5.4.3
+    image: pingcap/pd:v6.1.1 #v5.3.2
     hostname: "pd{{.Task.Slot}}"
     command:
-#      - --data-dir=/data
+      - --data-dir=/data
       - --config=/pd.toml
+      - --initial-cluster=pd1=http://pd1:2380,pd2=http://pd2:2380,pd3=http://pd3:2380
     ports:
       - "2379"
+    volumes:
+      - pd:/data
     networks:
       - network
     configs:
@@ -24,6 +27,48 @@ services:
           - node.role == manager
           - node.platform.os == linux
 
+  tikv:
+    image: pingcap/tikv:v6.1.1 #v5.3.2
+    hostname: "tikv-{{.Node.Hostname}}"
+    entrypoint: [ "/bin/sh", "-c", "/tikv-server --config=/tikv.toml --advertise-addr=$$HOSTNAME:20160 --addr=0.0.0.0:20160 --data-dir=/data --pd=http://pd1:2379,http://pd2:2379,http://pd3:2379" ]
+    ports:
+      - "20160"
+    volumes:
+      - tikv:/data
+    networks:
+      - network
+    configs:
+      - source: tikv.toml
+        target: /tikv.toml
+    depends_on:
+      - "pd"
+    deploy:
+      mode: replicated
+      replicas: 3
+      placement:
+        max_replicas_per_node: 1
+        constraints:
+          - node.role == manager
+          - node.platform.os == linux
+
+  tidb:
+    image: pingcap/tidb:v6.1.1 #v5.3.2
+    hostname: "tidb{{.Task.Slot}}"
+    command:
+      - --store=tikv
+      - --config=/tidb.toml
+      - --path=pd1:2379,pd2:2379,pd3:2379
+    ports:
+        - "4000"
+        - "10080"
+    networks:
+      - network
+    configs:
+      - source: tidb.toml
+        target: /tidb.toml
+    deploy:
+        replicas: 1
+
   # monitors
   pushgateway:
     image: prom/pushgateway:v0.3.1
@@ -32,11 +77,52 @@ services:
     command:
       - --log.level=error
 
-networks:
-  network:
+  prometheus:
+    user: root
+    image: prom/prometheus:v2.2.1
+    command:
+      - --log.level=error
+      - --storage.tsdb.path=/data/prometheus
+      - --config.file=/etc/prometheus/prometheus.yml
+    ports:
+      - "9095:9090"
+    networks:
+      - network
+#    volumes:
+#      - prometheus:/data
+    configs:
+      - source: prometheus.yml
+        target: /etc/prometheus/prometheus.yml
+      - source: pd.rules.yml
+        target: /etc/prometheus/pd.rules.yml
+      - source: tikv.rules.yml
+        target: /etc/prometheus/tikv.rules.yml
+      - source: tidb.rules.yml
+        target: /etc/prometheus/tidb.rules.yml
 
 configs:
   pd.toml:
     file: pd.toml.tmpl
     template_driver: golang
+  tikv.toml:
+    file: tikv.toml.tmpl
+    template_driver: golang
+  tidb.toml:
+    file: tidb.toml.tmpl
+    template_driver: golang
+  prometheus.yml:
+    file: prometheus/prometheus.yml
+  pd.rules.yml:
+    file: prometheus/pd.rules.yml
+  tikv.rules.yml:
+    file: prometheus/tikv.rules.yml
+  tidb.rules.yml:
+    file: prometheus/tidb.rules.yml
+
+networks:
+  network:
+
+volumes:
+  pd:
+  tikv:
 
