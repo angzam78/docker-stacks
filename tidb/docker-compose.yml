@@ -111,13 +111,13 @@ configs:
     file: tidb.toml.tmpl
     template_driver: golang
   prometheus.yml:
-    file: prometheus/prometheus.yml
+    file: prometheus.yml
   pd.rules.yml:
-    file: prometheus/pd.rules.yml
+    file: pd.rules.yml
   tikv.rules.yml:
-    file: prometheus/tikv.rules.yml
+    file: tikv.rules.yml
   tidb.rules.yml:
-    file: prometheus/tidb.rules.yml
+    file: tidb.rules.yml
 
 networks:
   network:
