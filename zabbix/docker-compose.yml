@@ -3,8 +3,8 @@ version: '3.8'
 services:
 
   zabbix-server:
-    container_name: zabbix-server
-    image: zabbix/zabbix-server-pgsql:6.2.3-ubuntu
+    hostname: zabbix-server
+    image: zabbix/zabbix-server-mysql:6.2.3-ubuntu
     secrets:
       - adminpass
     networks:
@@ -16,14 +16,14 @@ services:
     #  - './zabbix/alertscripts:/usr/lib/zabbix/alertscripts'
     environment:
       - DB_SERVER_HOST=172.17.0.1
-      - DB_SERVER_PORT=26257
-      - POSTGRES_DB=zabbix
-      - POSTGRES_USER=zabbix
-      - POSTGRES_PASSWORD_FILE=/run/secrets/adminpass
+      - DB_SERVER_PORT=4000
+      - MYSQL_DATABASE=zabbix
+      - MYSQL_USER=zabbix
+      - MYSQL_PASSWORD_FILE=/run/secrets/adminpass
 
   zabbix-frontend:
-    container_name: zabbix-frontend
-    image: zabbix/zabbix-web-nginx-pgsql:6.2.3-ubuntu
+    hostname: zabbix-frontend
+    image: zabbix/zabbix-web-nginx-mysql:6.2.3-ubuntu
     secrets:
       - adminpass
     networks:
@@ -33,13 +33,13 @@ services:
       - '8083:8080'
     environment:
       - DB_SERVER_HOST=172.17.0.1
-      - DB_SERVER_PORT=26257
-      - POSTGRES_DB=zabbix
-      - POSTGRES_USER=zabbix
-      - POSTGRES_PASSWORD_FILE=/run/secrets/adminpass
-   
+      - DB_SERVER_PORT=4000
+      - MYSQL_DATABASE=zabbix
+      - MYSQL_USER=zabbix
+      - MYSQL_PASSWORD_FILE=/run/secrets/adminpass
+
   grafana:
-    container_name: grafana
+    hostname: grafana
     image: grafana/grafana
     networks:
       - network
@@ -54,7 +54,7 @@ services:
       - zabbix-server
 
   zabbix-agent:
-    container_name: zabbix-agent
+    hostname: zabbix-agent
     image: zabbix/zabbix-agent2:6.2.3-alpine
     user: root
     networks:

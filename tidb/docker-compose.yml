@@ -103,6 +103,13 @@ services:
     networks:
       - network
 
+  cloudbeaver:
+    image: dbeaver/cloudbeaver:latest
+    ports:
+      - "8011:8978"
+    networks:
+      - network
+
 configs:
   pd.toml:
     file: pd.toml
