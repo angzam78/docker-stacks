@@ -47,9 +47,7 @@ services:
       - "3306:3306"
     <<: *mysql-cluster
     <<: *replicate
-    command: mysqld --datadir=/data
-    volumes:
-      - mysqld:/data
+    command: mysqld
 
   phpmyadmin:
     image: phpmyadmin
