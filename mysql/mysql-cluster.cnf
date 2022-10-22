@@ -13,6 +13,7 @@ hostname=ndb-mgmd2
 
 [ndbd default]
 NoOfReplicas=2
+MaxNoOfAttributes=4096
 DataDir=/data
 
 [ndbd]

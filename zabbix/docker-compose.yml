@@ -16,7 +16,7 @@ services:
     #  - './zabbix/alertscripts:/usr/lib/zabbix/alertscripts'
     environment:
       - DB_SERVER_HOST=172.17.0.1
-      - DB_SERVER_PORT=4000
+      - DB_SERVER_PORT=3306
       - MYSQL_DATABASE=zabbix
       - MYSQL_USER=zabbix
       - MYSQL_PASSWORD_FILE=/run/secrets/adminpass
@@ -33,7 +33,7 @@ services:
       - '8083:8080'
     environment:
       - DB_SERVER_HOST=172.17.0.1
-      - DB_SERVER_PORT=4000
+      - DB_SERVER_PORT=3306
       - MYSQL_DATABASE=zabbix
       - MYSQL_USER=zabbix
       - MYSQL_PASSWORD_FILE=/run/secrets/adminpass
