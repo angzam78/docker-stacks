@@ -1,0 +1,90 @@
+version: '3.9'
+
+x-mysql-cluster: &mysql-cluster
+  image: mysql/mysql-cluster
+  networks:
+    - network
+  configs:
+    - source: my.cnf
+      target: /etc/my.cnf
+    - source: mysql-cluster.cnf
+      target: /etc/mysql-cluster.cnf
+  healthcheck:
+    disable: true
+
+x-replicate: &replicate
+  deploy:
+    mode: replicated
+    replicas: 2
+    placement:
+      max_replicas_per_node: 1
+      constraints:
+        - node.role == manager
+        - node.platform.os == linux
+
+services:
+
+  ndb-mgmd:
+    hostname: "ndb-mgmd{{.Task.Slot}}"
+    <<: *mysql-cluster 
+    <<: *replicate
+    command: ndb_mgmd
+    volumes:
+      - mgmd:/data
+
+  ndb:
+    hostname: "ndb{{.Task.Slot}}"
+    <<: *mysql-cluster 
+    <<: *replicate
+    command: ndbd
+    volumes:
+      - ndb:/data
+
+  mysqld:
+    hostname: "mysqld{{.Task.Slot}}"
+    ports:
+      - "33060:33060"
+      - "3306:3306"
+    <<: *mysql-cluster
+    <<: *replicate
+    command: mysqld --datadir=/data
+    volumes:
+      - mysqld:/data
+
+  dbeaver:
+    image: dbeaver/cloudbeaver:latest
+    ports:
+      - "8978:8978"
+    volumes:
+      - dbeaver:/opt/cloudbeaver/workspace
+    networks:
+      - network
+
+  phpmyadmin:
+    image: phpmyadmin
+    ports:
+      - "8979:80"
+    networks:
+      - network
+    environment:
+      - PMA_HOST=mysqld
+
+configs:
+  my.cnf:
+    file: my.cnf
+  mysql-cluster.cnf:
+    file: mysql-cluster.cnf
+
+volumes:
+  mgmd:
+  ndb:
+  mysqld:
+  dbeaver:
+    driver: juicefs:latest
+    driver_opts:
+      metaurl: postgres://juicefs:ju1cyPass@172.17.0.1:26257/juicefs_docker
+      subdir: dbeaver
+
+networks:
+  network:
+

@@ -1,0 +1,36 @@
+#
+
+[ndb_mgmd default]
+DataDir=/data
+
+[ndb_mgmd]
+hostname=ndb-mgmd1
+
+[ndb_mgmd]
+hostname=ndb-mgmd2
+
+#
+
+[ndbd default]
+NoOfReplicas=2
+DataDir=/data
+
+[ndbd]
+hostname=ndb1
+
+[ndbd]
+hostname=ndb2
+
+#
+
+[mysqld]
+hostname=mysqld1
+
+[mysqld]
+hostname=mysqld2
+
+#
+
+[tcp default]
+AllowUnresolvedHostnames=1
+

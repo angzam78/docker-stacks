@@ -1,0 +1,17 @@
+
+ndb_mgm
+-- NDB Cluster -- Management Client --
+ndb_mgm> show
+
+mysql -u root -p
+
+ALTER USER `root`@`localhost` IDENTIFIED BY 'new_password', `root`@`localhost` PASSWORD EXPIRE NEVER;
+GRANT NDB_STORED_USER ON *.* TO `root`@`localhost` WITH GRANT OPTION;
+UPDATE mysql.user SET Password=PASSWORD('secure_password') WHERE User='root';
+
+CREATE USER 'root'@'%' IDENTIFIED BY 'rootpass';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+GRANT NDB_STORED_USER ON *.* TO `root`@`%` WITH GRANT OPTION;
+
+FLUSH PRIVILEGES;
+
