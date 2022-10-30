@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+
+  icinga2:
+    hostname: icinga2
+    image: icinga/icinga2
+    secrets:
+      - adminpass
+    networks:
+      - network
+      - database
+    ports:
+      - 5665:5665
+    volumes:
+      - icinga2:/data
+    environment:
+      - ICINGA_MASTER=1
+      - ICINGA_CN=icinga2
+
+  icingadb:
+    hostname: icingadb
+    image: icinga/icingadb
+    secrets:
+      - adminpass
+    networks:
+      - network
+      - database
+    environment:
+      - ICINGADB_REDIS_HOST=redis
+      - ICINGADB_REDIS_PORT=6379
+      - ICINGADB_DATABASE_HOST=mysql
+      - ICINGADB_DATABASE_PORT=3306
+      - ICINGADB_DATABASE_DATABASE=icingadb
+      - ICINGADB_DATABASE_USER=icingadb
+      - ICINGADB_DATABASE_PASSWORD=icingapass!
+
+  redis:
+    hostname: redis
+    image: redis
+    networks:
+      - network
+
+configs:
+  icingadb.conf:
+    file: icingadb.conf
+
+secrets:
+  adminpass:
+    external: true
+
+networks:
+  network:
+  database:
+    external: true
+
+volumes:
+  icinga2:
+    driver: juicefs:latest
+    driver_opts:
+      metaurl: postgres://juicefs:ju1cyPass@172.17.0.1:26257/juicefs_docker
+      subdir: icinga2
+

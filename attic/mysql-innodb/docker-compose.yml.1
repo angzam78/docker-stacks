@@ -1,0 +1,52 @@
+version: '3.9'
+
+services:
+
+x-mysql-cluster: &mysql-cluster
+  image: mysql:8.0.31
+  volumes:
+    - mysqld:/var/lib/mysql
+  networks:
+    - network
+  secrets:
+    - adminpass
+  configs:
+    - source: my.cnf
+      target: /etc/my.cnf
+  environment:
+    - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/adminpass
+
+services:
+
+  mysql1:
+    hostname: "mysql1"
+    <<: *mysql-cluster 
+    deploy:
+      placement:
+        constraints:
+          - node.labels.node == 1
+
+
+  phpmyadmin:
+    image: phpmyadmin
+    ports:
+      - "8979:80"
+    networks:
+      - network
+    environment:
+      - PMA_HOST=mysqld
+
+configs:
+  my.cnf:
+    file: my.cnf
+
+secrets:
+  adminpass:
+    external: true
+
+volumes:
+  mysqld:
+
+networks:
+  network:
+

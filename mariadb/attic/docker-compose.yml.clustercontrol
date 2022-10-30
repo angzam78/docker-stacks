@@ -1,0 +1,61 @@
+version: '3.9'
+
+services:
+
+  galera:
+    image: registry.viraqua.net/debian-ssh:buster-cc
+    hostname: "galera{{.Task.Slot}}"
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql:/var/lib/mysql
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - type: tmpfs
+        target: /run
+      - type: tmpfs
+        target: /run/lock
+      - type: tmpfs
+        target: /tmp
+    networks:
+      - clustercontrol
+    environment:
+      - AUTO_DEPLOYMENT=1
+      - CLUSTER_TYPE=galera
+      - CLUSTER_NAME=galera
+      - INITIAL_CLUSTER_SIZE=3
+      - VENDOR=mariadb
+      - PROVIDER_VERSION=10.6
+      - CC_HOST=clustercontrol
+    deploy:
+      replicas: 0
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+      placement:
+        constraints:
+          - node.platform.arch==x86_64
+
+  clustercontrol:
+    image: severalnines/clustercontrol
+    hostname: clustercontrol
+    ports:
+      - "5000:50"
+      - "5001:443"
+      - "9443:9443"
+      - "19501:19501"
+#    volumes:
+#      - ssh:/root/.ssh 
+    networks:
+      - clustercontrol
+    environment:
+      - DOCKER_HOST_ADDRESS=cluster.home.arpa
+    deploy:
+      replicas: 1
+
+volumes:
+  mysql:
+
+networks:
+  clustercontrol:
+    driver: overlay
+

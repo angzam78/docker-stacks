@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+
+  icinga2:
+    image: jordan/icinga2
+    # Set your hostname to the FQDN under which your
+    # satelites will reach this container
+    hostname: icinga2
+    networks:
+      - network
+      - database
+    environment:
+      - ICINGA2_FEATURE_GRAPHITE=0
+      # - ICINGA2_FEATURE_GRAPHITE_SEND_THRESHOLDS=true
+      # - ICINGA2_FEATURE_GRAPHITE_SEND_METADATA=false
+      #- ICINGAWEB2_ADMIN_USER=icingaadmin
+      #- ICINGAWEB2_ADMIN_PASS=icinga
+      #- ICINGA2_USER_FULLNAME=Icinga2 Docker Monitoring Instance
+      - DEFAULT_MYSQL_HOST=mysql
+      - DEFAULT_MYSQL_USER=icingadb
+      - DEFAULT_MYSQL_PASS=icingapass!
+      - DEFAULT_MYSQL_DATA=icingadb
+    volumes:
+      - icinga2:/etc/icinga2
+      - icinga2-lib:/var/lib/icinga2
+      # Sending e-mail
+      #  See: https://github.com/jjethwa/icinga2#sending-notification-mails
+      #  If you want to enable outbound e-mail, edit the file mstmp/msmtprc
+      #  and configure to your corresponding mail setup. The default is a
+      #  Gmail example but msmtp can be used for any MTA configuration.
+      #  Change the aliases in msmtp/aliases to your recipients.
+      #  Then uncomment the rows below
+      # - ./msmtp/msmtprc:/etc/msmtprc:ro
+      # - ./msmtp/aliases:/etc/aliases:ro
+    ports:
+      - "8080:80"
+      - "8443:443"
+      - "5665:5665"
+
+secrets:
+  adminpass:
+    external: true
+
+networks:
+  network:
+  database:
+    external: true
+
+volumes:
+  icinga2:
+    driver: juicefs:latest
+    driver_opts:
+      metaurl: postgres://juicefs:ju1cyPass@172.17.0.1:26257/juicefs_docker
+      subdir: icinga2
+  icinga2-lib:
+    driver: juicefs:latest
+    driver_opts:
+      metaurl: postgres://juicefs:ju1cyPass@172.17.0.1:26257/juicefs_docker
+      subdir: icinga2-lib
+

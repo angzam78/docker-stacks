@@ -1,0 +1,13 @@
+https://mariadb.com/ja/resources/blog/mariadb-galera-cluster-a-quirk-of-bootstrapping/
+
+https://github.com/toughIQ/docker-mariadb-cluster/tree/master/scripts
+
+https://computingforgeeks.com/install-mariadb-galera-cluster-on-ubuntu-with-proxysql/
+
+https://github.com/colinmollenhour/mariadb-galera-swarm/blob/master/mysqld.sh
+
+https://groups.google.com/g/codership-team/c/ZYNNF3lMLNM
+
+https://www.linuxbabe.com/mariadb/galera-cluster-ubuntu
+
+

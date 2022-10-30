@@ -1,0 +1,43 @@
+
+docker node update --label-add node=1 fujitsu
+docker node update --label-add node=2 esprimo
+docker node update --label-add node=3 jetson
+
+####
+
+\help
+dba.help();
+cl.status();
+\quit
+
+http://insidemysql.com/mysqlvp/idc/
+
+var cl = dba.getCluster();
+var cl = dba.rebootClusterFromCompleteOutage();
+
+##
+
+mysqlrouter --bootstrap mysqld1:3380
+
+########
+
+var dbPass = "piggyback123";
+
+shell.connect("root@mysqld1", dbPass);
+
+dba.configureInstance("root@mysqld1", {password: dbPass, interactive: false});
+dba.configureInstance("root@mysqld2", {password: dbPass, interactive: false});
+dba.configureInstance("root@mysqld3", {password: dbPass, interactive: false});
+
+# restart required here
+
+var dbPass = "piggyback123";
+
+shell.connect("root@mysqld1", dbPass);
+
+var cl = dba.createCluster("cluster", {multiPrimary:true, force:true});
+
+cl.addInstance({host:"mysqld2", user:"root", password:dbPass}, {recoveryMethod: 'Clone'});
+cl.addInstance({host:"mysqld3", user:"root", password:dbPass}, {recoveryMethod: 'Clone'});
+
+

@@ -1,0 +1,40 @@
+https://mariadb.com/ja/resources/blog/mariadb-galera-cluster-a-quirk-of-bootstrapping/
+
+https://github.com/toughIQ/docker-mariadb-cluster/tree/master/scripts
+
+https://computingforgeeks.com/install-mariadb-galera-cluster-on-ubuntu-with-proxysql/
+
+https://github.com/colinmollenhour/mariadb-galera-swarm/blob/master/mysqld.sh
+
+https://groups.google.com/g/codership-team/c/ZYNNF3lMLNM
+
+https://www.linuxbabe.com/mariadb/galera-cluster-ubuntu
+
+https://www.redhat.com/sysadmin/getting-started-socat
+
+socat -v -T0.05 tcp-l:7777,reuseaddr,fork system:"echo
+
+socat - TCP4:mariadb1:7777
+
+#!/bin/bash
+
+handle() {
+  echo 'HTTP/1.0 200 OK'
+  echo 'Content-Type: text/plain'
+  echo "Date: $(date)"
+  echo "Server: $SOCAT_SOCKADDR:$SOCAT_SOCKPORT"
+  echo "Client: $SOCAT_PEERADDR:$SOCAT_PEERPORT"
+  echo 'Connection: close'
+  echo
+  cat
+}
+
+case $1 in
+  "bind")
+    socat -T0.05 -v tcp-l:8081,reuseaddr,fork,crlf system:". $0 && handle"
+    ;;
+esac
+
+====
+
+

@@ -1,0 +1,69 @@
+version: '3.9'
+
+services:
+
+  seed:
+    image: registry.viraqua.net/mariadb-galera-swarm:10.8
+    environment:
+      - XTRABACKUP_PASSWORD_FILE=/run/secrets/xtrabackup_password
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD_FILE=/run/secrets/mysql_password
+      - MYSQL_DATABASE=database
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql_root_password
+      - NODE_ADDRESS=^10.0.*.*
+    networks:
+      - database
+    command: seed
+    secrets:
+      - xtrabackup_password
+      - mysql_password
+      - mysql_root_password
+    deploy:
+      replicas: 0
+
+  mysql:
+    image: registry.viraqua.net/mariadb-galera-swarm:10.8
+    command: node tasks.seed,tasks.mysql
+    environment:
+      - XTRABACKUP_PASSWORD_FILE=/run/secrets/xtrabackup_password
+      - NODE_ADDRESS=^10.0.*.*
+      - HEALTHY_WHILE_BOOTING=1
+    networks:
+      - database
+    volumes:
+      - data:/var/lib/mysql
+    secrets:
+      - xtrabackup_password
+    deploy:
+      replicas: 2
+      placement:
+        max_replicas_per_node: 1
+        constraints:
+          - node.role == manager
+          - node.platform.os == linux
+          - node.platform.arch == x86_64
+
+  phpmyadmin:
+    image: phpmyadmin
+    ports:
+      - "8979:80"
+    networks:
+      - database
+    environment:
+      - PMA_HOST=mysql
+
+volumes:
+  data:
+
+networks:
+  database:
+    external: true
+
+secrets:
+  xtrabackup_password:
+    file: secrets/xtrabackup_password
+  mysql_password:
+    file: secrets/mysql_password
+  mysql_root_password:
+    file: secrets/mysql_root_password
+

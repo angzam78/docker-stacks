@@ -1,0 +1,3 @@
+
+docker run -v mariadb_data:/var/lib/mysql mariadb --wsrep-new-cluster
+

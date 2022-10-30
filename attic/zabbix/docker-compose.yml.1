@@ -9,13 +9,14 @@ services:
       - adminpass
     networks:
       - network
+      - database
     restart: always
     ports:
       - '10051:10051'
     #volumes:
     #  - './zabbix/alertscripts:/usr/lib/zabbix/alertscripts'
     environment:
-      - DB_SERVER_HOST=172.17.0.1
+      - DB_SERVER_HOST=mysql
       - DB_SERVER_PORT=3306
       - MYSQL_DATABASE=zabbix
       - MYSQL_USER=zabbix
@@ -28,11 +29,12 @@ services:
       - adminpass
     networks:
       - network
+      - database
     restart: always
     ports:
       - '8083:8080'
     environment:
-      - DB_SERVER_HOST=172.17.0.1
+      - DB_SERVER_HOST=mysql
       - DB_SERVER_PORT=3306
       - MYSQL_DATABASE=zabbix
       - MYSQL_USER=zabbix
@@ -77,4 +79,6 @@ secrets:
 
 networks:
   network:
+  database:
+    external: true
 
