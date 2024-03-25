@@ -12,5 +12,6 @@ replicaof keydb2 6379
 replicaof keydb3 6379
 
 appendonly yes
+appendfsync always
 
 user system on +@all ~* >system
