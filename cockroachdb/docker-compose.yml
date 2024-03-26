@@ -3,9 +3,9 @@ version: '3.9'
 services:
 
   roach:
-    image: registry.viraqua.net/cockroachdb:v22.1.7-1663710783
-    hostname: "roach{{.Task.Slot}}"
-    command: start --certs-dir=/certs --join=roach1:26257,roach2:26257,roach3:26257
+    image: cockroachdb/cockroach:v22.1.21
+    hostname: "crdb{{.Task.Slot}}"
+    command: start --certs-dir=/certs --join=crdb1:26257,crdb2:26257,crdb3:26257
     ports:
       - "8081:8080"
       - "26257:26257"
