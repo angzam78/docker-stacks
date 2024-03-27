@@ -3,7 +3,7 @@ version: '3.9'
 services:
 
   roach:
-    image: cockroachdb/cockroach:v23.2.3
+    image: cockroachdb/cockroach:v22.1.21
     hostname: "crdb{{.Task.Slot}}"
     command: start --certs-dir=/certs --join=crdb1:26257,crdb2:26257,crdb3:26257
     ports:
